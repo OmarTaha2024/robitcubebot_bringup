@@ -45,9 +45,11 @@ def generate_launch_description():
         arguments=['-d', rviz_config_path]
     )
 
+
+
     
     return LaunchDescription([
         gazebo,
         controller,
-        rviz2_node
+        rviz2_node,
     ])
