@@ -18,15 +18,24 @@ from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import Command
 
 def generate_launch_description():
+
+
+    world_file_name = 'my_world.world'
+    world = os.path.join(
+        get_package_share_directory('robitcubebot_bringup'),
+        'worlds',
+        world_file_name
+    )
     gazebo = IncludeLaunchDescription(
         os.path.join(
             get_package_share_directory("robitcubebot_description"),
             "launch",
             "gazebo.launch.py"
         ),
+        launch_arguments={'world': world}.items()
     )
     rviz_config_path = os.path.join(get_package_share_directory('robitcubebot_description'),
-                                    'rviz', 'my_robot_config.rviz')
+                                  'rviz', 'my_robot_config.rviz')
     
     controller = IncludeLaunchDescription(
         os.path.join(
@@ -41,15 +50,22 @@ def generate_launch_description():
     )
     rviz2_node = Node(
         package="rviz2",
-        executable="rviz2",
-        arguments=['-d', rviz_config_path]
+       executable="rviz2",
+       arguments=['-d', rviz_config_path]
     )
-
-
+    moveit = IncludeLaunchDescription(
+           os.path.join(
+              get_package_share_directory("robitcubebot_moveit"),
+               "launch",
+              "moveit.launch.py"
+           ),
+           launch_arguments={"is_sim": "True"}.items()
+       )
 
     
     return LaunchDescription([
         gazebo,
         controller,
+        moveit,
         rviz2_node,
     ])
